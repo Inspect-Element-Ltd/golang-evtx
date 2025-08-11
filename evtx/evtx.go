@@ -113,7 +113,7 @@ type File struct {
 // return File : File structure initialized
 func New(r io.ReadSeeker) (ef File, err error) {
 	ef.file = r
-	ef.ParseFileHeader()
+	err = ef.ParseFileHeader()
 	return
 }
 
@@ -154,15 +154,15 @@ func (ef *File) SetMonitorExisting(value bool) {
 
 // ParseFileHeader parses a the file header of the file structure and modifies
 // the Header of the current structure
-func (ef *File) ParseFileHeader() {
+func (ef *File) ParseFileHeader() error {
 	ef.Lock()
 	defer ef.Unlock()
 
-	GoToSeeker(ef.file, 0)
-	err := encoding.Unmarshal(ef.file, &ef.Header, Endianness)
-	if err != nil {
-		panic(err)
+	if err := GoToSeekerErr(ef.file, 0); err != nil {
+		return err
 	}
+
+	return encoding.Unmarshal(ef.file, &ef.Header, Endianness)
 }
 
 func (fh FileHeader) String() string {
@@ -299,7 +299,9 @@ func (ef *File) monitorChunks(stop chan bool, sleep time.Duration) (cc chan Chun
 		firstLoopFlag := !ef.monitorExisting
 		for {
 			// Parse the file header again to get the updates in the file
-			ef.ParseFileHeader()
+			if err := ef.ParseFileHeader(); err != nil {
+				panic(err)
+			}
 
 			// check if we should stop or not
 			select {

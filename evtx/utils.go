@@ -107,6 +107,11 @@ func GoToSeeker(seeker io.Seeker, offset int64) {
 	}
 }
 
+func GoToSeekerErr(seeker io.Seeker, offset int64) error {
+	_, err := seeker.Seek(offset, os.SEEK_SET)
+	return err
+}
+
 func RelGoToSeeker(seeker io.Seeker, offset int64) {
 	_, err := seeker.Seek(offset, os.SEEK_CUR)
 	if err != nil {
@@ -114,7 +119,7 @@ func RelGoToSeeker(seeker io.Seeker, offset int64) {
 	}
 }
 
-//////////////////////////////// UTF16String ///////////////////////////////////
+// ////////////////////////////// UTF16String ///////////////////////////////////
 // NB: We keep those structure for compatibility with parts of the code
 type UTF16 uint16
 
