@@ -119,7 +119,7 @@ func RelGoToSeeker(seeker io.Seeker, offset int64) {
 	}
 }
 
-// ////////////////////////////// UTF16String ///////////////////////////////////
+//////////////////////////////// UTF16String ///////////////////////////////////
 // NB: We keep those structure for compatibility with parts of the code
 type UTF16 uint16
 
